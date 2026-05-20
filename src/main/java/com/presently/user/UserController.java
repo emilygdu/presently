@@ -14,19 +14,19 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/me")
-    public ResponseEntity<User> getMe() {
+    public ResponseEntity<UserDTO> getMe() {
         String username = SecurityContextHolder.getContext()
             .getAuthentication().getName();
 
         return userService.findByUsername(username)
-            .map(ResponseEntity::ok)
+            .map(user -> ResponseEntity.ok(userService.toDTO(user)))
             .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         return userService.findById(id)
-                .map(ResponseEntity::ok)
+                .map(user -> ResponseEntity.ok(userService.toDTO(user)))
                 .orElse(ResponseEntity.notFound().build());
     }
     

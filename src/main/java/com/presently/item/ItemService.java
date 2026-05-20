@@ -1,6 +1,8 @@
 package com.presently.item;
 
 import com.presently.user.User;
+import com.presently.user.UserDTO;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -42,6 +44,47 @@ public class ItemService {
 
     public void deleteItem(Long itemId) {
         itemRepository.deleteById(itemId);
+    }
+
+    public Optional<Item> findById(Long id) {
+        return itemRepository.findById(id);
+    }
+
+    public ItemDTO toDTO(Item item, boolean isOwner) {
+        UserDTO ownerDTO = new UserDTO(
+            item.getOwner().getId(),
+            item.getOwner().getUsername(),
+            item.getOwner().getEmail()
+        );
+
+        if (isOwner) {
+            return new ItemDTO(
+                item.getId(),
+                item.getTitle(),
+                item.getPrice(),
+                item.getProductUrl(),
+                item.getImageUrl(),
+                item.getProductCategory(),
+                item.getEventType(),
+                item.getIsFavorite(),
+                ownerDTO,
+                null //Owner can't  see woh bought the item
+            );
+        } else {
+            return new ItemDTO(
+                item.getId(),
+                item.getTitle(),
+                item.getPrice(),
+                item.getProductUrl(),
+                item.getImageUrl(),
+                item.getProductCategory(),
+                item.getEventType(),
+                item.getIsFavorite(),
+                ownerDTO,
+                item.getBoughtBy() != null //Friends only can see true or false
+
+            );
+        }
     }
     
 }
