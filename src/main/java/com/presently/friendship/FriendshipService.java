@@ -15,7 +15,7 @@ public class FriendshipService {
 
     public Friendship sendFriendRequest(User requester, User receiver) {
         Optional<Friendship> existing = friendshipRepository
-                .findByRecieverAndRequester(receiver, requester);
+                .findByReceiverAndRequester(receiver, requester);
         
         if (existing.isPresent()) {
             throw new RuntimeException("Friend request already exists");
@@ -23,17 +23,17 @@ public class FriendshipService {
 
         Friendship friendship = new Friendship();
         friendship.setRequester(requester);
-        friendship.setReciever(receiver);
+        friendship.setReceiver(receiver);
         friendship.setStatus(FriendshipStatus.PENDING);
 
         return friendshipRepository.save(friendship);
     }
 
-    public Friendship acceptFriendRequest(Long friendshipId, User reciever) {
+    public Friendship acceptFriendRequest(Long friendshipId, User receiver) {
         Friendship friendship = friendshipRepository.findById(friendshipId)
                 .orElseThrow(() -> new RuntimeException("Friend request not found"));
         
-        if (!friendship.getReciever().getId().equals(reciever.getId())) {
+        if (!friendship.getReceiver().getId().equals(receiver.getId())) {
             throw new RuntimeException("No authorization to accept this request");
         }
 
@@ -44,10 +44,10 @@ public class FriendshipService {
     public List<Friendship> getFriends(User user) {
         List<Friendship> asRequester = friendshipRepository
                 .findByRequesterAndStatus(user, FriendshipStatus.ACCEPTED);
-        List<Friendship> asReciever = friendshipRepository
-                .findByRecieverAndStatus(user, FriendshipStatus.ACCEPTED);
+        List<Friendship> asReceiver = friendshipRepository
+                .findByReceiverAndStatus(user, FriendshipStatus.ACCEPTED);
 
-        asRequester.addAll(asReciever);
+        asRequester.addAll(asReceiver);
         return asRequester;
     }
 

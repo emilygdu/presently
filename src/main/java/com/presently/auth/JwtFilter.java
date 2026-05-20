@@ -30,8 +30,6 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
                 String authHeader = request.getHeader("Authorization");
-                // temporärer Debug-Print
-                System.out.println("Auth Header: "+ authHeader);
 
                 if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                     filterChain.doFilter(request, response);
@@ -39,9 +37,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
 
                 String token = authHeader.substring(7);
-                // temporärer Debug-Print
-                System.out.println("Token gültig: "+ jwtUtil.isTokenValid(token));
-                System.out.println("Username: "+ jwtUtil.extractUsername(token));
 
                 if (!jwtUtil.isTokenValid(token)) {
                     filterChain.doFilter(request, response);

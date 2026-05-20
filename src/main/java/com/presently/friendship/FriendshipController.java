@@ -34,6 +34,8 @@ public class FriendshipController {
         String username = SecurityContextHolder.getContext()
             .getAuthentication().getName();
 
+        System.out.println("Send request von: " + username + " an id: " + id);
+
         return userService.findByUsername(username).map(requester ->
             userService.findById(id).map(receiver ->
                     ResponseEntity.ok(friendshipService.sendFriendRequest(requester, receiver)))

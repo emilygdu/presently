@@ -23,8 +23,8 @@ public class Friendship {
     private User requester;
 
     @ManyToOne
-    @JoinColumn(name = "reciever_id", nullable = false)
-    private User reciever;
+    @JoinColumn(name = "receiver_id", nullable = false)
+    private User receiver;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

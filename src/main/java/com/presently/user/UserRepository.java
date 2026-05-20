@@ -12,3 +12,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
 }
+
+// einzige Schicht die mit der Datenbank redet
+// lesen, speichern, löschen und suchen

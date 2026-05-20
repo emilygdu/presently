@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 
 public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
-    List<Friendship> findByRecieverAndStatus(User reciever, FriendshipStatus status);
+    List<Friendship> findByReceiverAndStatus(User receiver, FriendshipStatus status);
     List<Friendship> findByRequesterAndStatus(User requester, FriendshipStatus status);
-    Optional<Friendship> findByRecieverAndRequester(User reciever, User requester);
+    Optional<Friendship> findByReceiverAndRequester(User receiver, User requester);
 }
