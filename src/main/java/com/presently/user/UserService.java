@@ -3,6 +3,7 @@ package com.presently.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +34,10 @@ public class UserService {
 
     public UserDTO toDTO(User user) {
         return new UserDTO(user.getId(), user.getUsername(), user.getEmail());
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
     
 }
