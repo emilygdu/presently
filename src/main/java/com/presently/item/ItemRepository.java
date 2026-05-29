@@ -12,4 +12,9 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findByOwnerAndProductCategory(User owner, ProductCategory productcategory);
     List<Item> findByOwnerAndEventType(User owner, EventType eventType);
     List<Item> findByOwnerAndProductCategoryAndEventType(User owner, ProductCategory productCategory, EventType eventType);
+    List<Item> findByOwnerAndIsFavoriteTrue(User owner);
+    List<Item> findByOwnerAndPriceLessThanEqual(User owner, Double maxPrice);
+    List<Item> findByOwnerAndPriceGreaterThanEqual(User owner, Double minPrice);
+    List<Item> findByOwnerAndTitleContainingIgnoreCase(User owner, String title);
+    List<Item> findByOwnerAndProductCategoryIn(User owner, List<ProductCategory> categories);
 }

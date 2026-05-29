@@ -2,7 +2,6 @@ package com.presently.item;
 
 import com.presently.user.User;
 import com.presently.user.UserDTO;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -19,16 +18,35 @@ public class ItemService {
         return itemRepository.findByOwner(owner);
     }
 
-    public List<Item> getItemsFiltered(User owner, ProductCategory category, EventType eventType) {
+    public List<Item> getItemsFiltered(User owner, ProductCategory category, EventType eventType, 
+        List<ProductCategory> categories, Boolean isFavorite, 
+        Double minPrice, Double maxPrice, String title) {
+
+        if (categories != null && !categories.isEmpty()) {
+            return itemRepository.findByOwnerAndProductCategoryIn(owner, categories);
+        }
+        if (isFavorite != null && isFavorite) {
+            return itemRepository.findByOwnerAndIsFavoriteTrue(owner);
+        }
+        if (minPrice != null) {
+            return itemRepository.findByOwnerAndPriceGreaterThanEqual(owner, minPrice);
+        }
+        if (maxPrice != null) {
+            return itemRepository.findByOwnerAndPriceLessThanEqual(owner, maxPrice);
+        }
+        if (title != null) {
+            return itemRepository.findByOwnerAndTitleContainingIgnoreCase(owner, title);
+        }
         if (category != null && eventType != null) {
             return itemRepository.findByOwnerAndProductCategoryAndEventType(owner, category, eventType);
-        } else if (category != null) {
-            return itemRepository.findByOwnerAndProductCategory(owner, category);
-        } else if (eventType != null) {
-            return itemRepository.findByOwnerAndEventType(owner, eventType);
-        } else {
-            return itemRepository.findByOwner(owner);
         }
+        if (category != null) {
+            return itemRepository.findByOwnerAndProductCategory(owner, category);
+        }
+        if (eventType != null) {
+            return itemRepository.findByOwnerAndEventType(owner, eventType);
+        }
+        return itemRepository.findByOwner(owner);
     }
 
     public Item save(Item item) {
@@ -85,6 +103,5 @@ public class ItemService {
 
             );
         }
-    }
-    
+    }  
 }

@@ -18,11 +18,19 @@ public class ItemController {
     @GetMapping("/items")
     public ResponseEntity<List<ItemDTO>> getItems(
             @RequestParam(required = false) ProductCategory category,
-            @RequestParam(required = false) EventType eventType) {
+            @RequestParam(required = false) EventType eventType,
+            @RequestParam(required = false) List<ProductCategory> categories,
+            @RequestParam(required = false) Boolean isFavorite,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String title) {
+
         String username = SecurityContextHolder.getContext()
-                .getAuthentication().getName();
+            .getAuthentication().getName();
+
         return userService.findByUsername(username).map(user -> {
-            List<ItemDTO> items = itemService.getItemsFiltered(user, category, eventType)
+            List<ItemDTO> items = itemService.getItemsFiltered(
+                    user, category, eventType, categories, isFavorite, minPrice, maxPrice, title)
                     .stream()
                     .map(item -> itemService.toDTO(item, true))
                     .toList();

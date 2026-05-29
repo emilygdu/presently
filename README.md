@@ -146,8 +146,22 @@ Use the token from the response in all subsequent requests as a Bearer token in 
 
 | Method | Endpoint | Description | Auth |
 |--------|----------|-------------|------|
+| GET | /users | Get all users | Yes |
 | GET | /users/me | Get the currently logged in user | Yes |
 | GET | /users/{id} | Get a user by ID | Yes |
+| PUT | /users/me | Update username or email | Yes |
+| GET | /users/{id}/wishlist | Get wish list of a friend | Yes |
+
+#### Update User — Request Body
+
+```json
+{
+    "username": "new_username",
+    "email": "new_email@example.com"
+}
+```
+
+Both fields are optional — you can send only the field you want to update.
 
 ### Wish List Items
 
@@ -179,12 +193,21 @@ The `GET /wishlist/items` endpoint supports optional query parameters:
 
 | Parameter | Values | Description |
 |-----------|--------|-------------|
-| category | TECHNOLOGY, SPORT, FASHION, BEAUTY, HOME, FOOD, TRAVEL, OTHER | Filter by product category |
-| eventType | BIRTHDAY, WEDDING, CHRISTMAS, BABY_SHOWER, GRADUATION, OTHER | Filter by event type |
+| category | TECHNOLOGY, SPORT, FASHION, BEAUTY, HOME, FOOD, TRAVEL, OTHER | Filter by one product category |
+| categories | TECHNOLOGY, SPORT, FASHION, BEAUTY, HOME, FOOD, TRAVEL, OTHER | Filter by multiple product categories |
+| eventType | BIRTHDAY, WEDDING, CHRISTMAS, GRADUATION | Filter by event type |
+| isFavorite | true | Show only favorite items |
+| minPrice | e.g. 50.0 | Show items above this price |
+| maxPrice | e.g. 300.0 | Show items below this price |
+| title | e.g. Sony | Search by title |
 
-Example:
+Examples:
 
 ```
+GET /wishlist/items?isFavorite=true
+GET /wishlist/items?title=Sony
+GET /wishlist/items?maxPrice=300
+GET /wishlist/items?categories=TECHNOLOGY&categories=SPORT
 GET /wishlist/items?category=TECHNOLOGY&eventType=BIRTHDAY
 ```
 
@@ -215,4 +238,4 @@ When a **friend** marks an item as bought, the **owner of the wish list cannot s
 
 ### eventType
 
-`BIRTHDAY` `WEDDING` `CHRISTMAS` `BABY_SHOWER` `GRADUATION` `OTHER`
+`BIRTHDAY` `WEDDING` `CHRISTMAS` `GRADUATION`

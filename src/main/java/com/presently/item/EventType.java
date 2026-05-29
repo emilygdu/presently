@@ -4,6 +4,5 @@ public enum EventType {
     BIRTHDAY,
     WEDDING,
     CHRISTMAS,
-    GRADUATION,
-    OTHER
+    GRADUATION
 }
