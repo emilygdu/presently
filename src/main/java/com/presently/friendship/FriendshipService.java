@@ -3,6 +3,8 @@ package com.presently.friendship;
 import com.presently.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,13 +13,15 @@ import java.util.Optional;
 
 public class FriendshipService {
 
-    public final FriendshipRepository friendshipRepository;
+    private final FriendshipRepository friendshipRepository;
 
     public Friendship sendFriendRequest(User requester, User receiver) {
         Optional<Friendship> existing = friendshipRepository
                 .findByReceiverAndRequester(receiver, requester);
+        Optional<Friendship> reverse = friendshipRepository
+                .findByReceiverAndRequester(requester, receiver);
         
-        if (existing.isPresent()) {
+        if (existing.isPresent() || reverse.isPresent()) {
             throw new RuntimeException("Friend request already exists");
         }
 
@@ -47,11 +51,16 @@ public class FriendshipService {
         List<Friendship> asReceiver = friendshipRepository
                 .findByReceiverAndStatus(user, FriendshipStatus.ACCEPTED);
 
-        asRequester.addAll(asReceiver);
-        return asRequester;
+        List<Friendship> allFriends = new ArrayList<>(asRequester);
+        allFriends.addAll(asReceiver);
+        return allFriends;
     }
 
     public void deleteFriendship(Long friendshipId) {
         friendshipRepository.deleteById(friendshipId);
-    }    
+    }
+    
+    public Optional<Friendship> findById(Long id) {
+        return friendshipRepository.findById(id);
+    }
 }

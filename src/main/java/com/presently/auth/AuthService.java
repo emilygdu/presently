@@ -11,16 +11,16 @@ import org.springframework.stereotype.Service;
 
 public class AuthService {
 
-    public final UserService userService;
-    public final PasswordEncoder passwordEncoder;
-    public final JwtUtil jwtUtil;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     public String register(String username, String email, String password) {
         if (userService.existsByUsername(username)) {
-            throw new RuntimeException("Username bereits vorhanden");
+            throw new RuntimeException("Invalid credentials");
         }
         if (userService.existsByEmail(email)) {
-            throw new RuntimeException("Email bereits vergeben");
+            throw new RuntimeException("Invalid credentials");
         }
 
         User user = new User();
@@ -34,9 +34,9 @@ public class AuthService {
 
     public String login(String username, String password) {
         User user = userService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User nicht gefunden"));
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Falsches Passwort");
+            throw new RuntimeException("Invalid credentials");
         }
 
         return jwtUtil.generateToken(user.getUsername(), user.getId());

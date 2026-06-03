@@ -65,7 +65,13 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 server.port=8080
+jwt.secret=YOUR_SECRET_KEY_MINIMUM_32_CHARACTERS
 ```
+
+> **Note:** The `jwt.secret` must be at least 32 characters long. You can generate a secure secret with:
+> ```bash
+> openssl rand -base64 32
+> ```
 
 ### 5. Run the application
 

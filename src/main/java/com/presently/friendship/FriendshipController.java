@@ -3,7 +3,6 @@ package com.presently.friendship;
 import com.presently.user.User;
 import com.presently.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +33,6 @@ public class FriendshipController {
         String username = SecurityContextHolder.getContext()
             .getAuthentication().getName();
 
-        System.out.println("Send request von: " + username + " an id: " + id);
 
         return userService.findByUsername(username).map(requester ->
             userService.findById(id).map(receiver ->
@@ -56,7 +54,22 @@ public class FriendshipController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFriendship(@PathVariable Long id) {
+        String username = SecurityContextHolder.getContext()
+            .getAuthentication().getName();
+
+        var user = userService.findByUsername(username);
+        if (user.isEmpty()) return ResponseEntity.notFound().build();
+
+        var friendship = friendshipService.findById(id);
+        if (friendship.isEmpty()) return ResponseEntity.notFound().build();
+
+        Friendship f = friendship.get();
+        if (!f.getRequester().getId().equals(user.get().getId()) &&
+            !f.getReceiver().getId().equals(user.get().getId())) {
+            return ResponseEntity.status(403).build();
+        }
+
         friendshipService.deleteFriendship(id);
         return ResponseEntity.noContent().build();
-    }   
+    }
 }

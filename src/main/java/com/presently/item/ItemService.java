@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class ItemService {
 
-    public final ItemRepository itemRepository;
+    private final ItemRepository itemRepository;
 
     public List<Item> getItemsByOwner(User owner){
         return itemRepository.findByOwner(owner);
