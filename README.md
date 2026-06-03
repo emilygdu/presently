@@ -189,7 +189,7 @@ Both fields are optional — you can send only the field you want to update.
 
 #### Filter & Sort
 
-The `GET /wishlist/items` endpoint supports optional query parameters:
+All filters can be combined freely. The `GET /wishlist/items` and `GET /users/{id}/wishlist` endpoints support the following optional query parameters:
 
 | Parameter | Values | Description |
 |-----------|--------|-------------|
@@ -200,15 +200,16 @@ The `GET /wishlist/items` endpoint supports optional query parameters:
 | minPrice | e.g. 50.0 | Show items above this price |
 | maxPrice | e.g. 300.0 | Show items below this price |
 | title | e.g. Sony | Search by title |
+| sortBy | price_asc, price_desc, title_asc, title_desc | Sort items |
 
 Examples:
 
 ```
-GET /wishlist/items?isFavorite=true
-GET /wishlist/items?title=Sony
-GET /wishlist/items?maxPrice=300
-GET /wishlist/items?categories=TECHNOLOGY&categories=SPORT
-GET /wishlist/items?category=TECHNOLOGY&eventType=BIRTHDAY
+GET /wishlist/items?isFavorite=true&maxPrice=300
+GET /wishlist/items?minPrice=100&maxPrice=500
+GET /wishlist/items?sortBy=price_asc
+GET /wishlist/items?sortBy=price_asc&maxPrice=500&isFavorite=true
+GET /users/2/wishlist?sortBy=price_desc&category=TECHNOLOGY
 ```
 
 #### Important — Bought Items

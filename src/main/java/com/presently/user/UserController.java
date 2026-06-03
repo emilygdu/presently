@@ -4,15 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
+
 import java.util.Map;
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
 import com.presently.item.ItemDTO;
 import com.presently.item.ItemService;
+import com.presently.item.ProductCategory;
+import com.presently.item.EventType;
+import com.presently.item.Item;
 
 
 
@@ -68,16 +68,25 @@ public class UserController {
     }
 
     @GetMapping("/{id}/wishlist")
-    public ResponseEntity<List<ItemDTO>> getFriendWishlist(@PathVariable Long id) {
+    public ResponseEntity<List<ItemDTO>> getFriendWishlist(
+            @PathVariable Long id,
+            @RequestParam(required = false) ProductCategory category,
+            @RequestParam(required = false) EventType eventType,
+            @RequestParam(required = false) List<ProductCategory> categories,
+            @RequestParam(required = false) Boolean isFavorite,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String sortBy) {
+
         return userService.findById(id).map(user -> {
-            List<ItemDTO> items = itemService.getItemsByOwner(user)
-                .stream()
-                .map(item -> itemService.toDTO(item, false))
-                .toList();
-            return ResponseEntity.ok(items);
+            List<Item> items = itemService.getItemsFiltered(
+                    user, category, eventType, categories, isFavorite, minPrice, maxPrice, title);
+            List<ItemDTO> sorted = itemService.sortItems(items, sortBy)
+                    .stream()
+                    .map(item -> itemService.toDTO(item, false))
+                    .toList();
+        return ResponseEntity.ok(sorted);
         }).orElse(ResponseEntity.notFound().build());
-    }
-    
-    
-    
+    } 
 }

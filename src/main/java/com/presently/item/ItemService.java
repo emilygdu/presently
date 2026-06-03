@@ -18,35 +18,55 @@ public class ItemService {
         return itemRepository.findByOwner(owner);
     }
 
-    public List<Item> getItemsFiltered(User owner, ProductCategory category, EventType eventType, 
-        List<ProductCategory> categories, Boolean isFavorite, 
+    public List<Item> getItemsFiltered(User owner, ProductCategory category, EventType eventType,
+        List<ProductCategory> categories, Boolean isFavorite,
         Double minPrice, Double maxPrice, String title) {
 
+        List<Item> items = itemRepository.findByOwner(owner);
+
         if (categories != null && !categories.isEmpty()) {
-            return itemRepository.findByOwnerAndProductCategoryIn(owner, categories);
+            items = items.stream()
+                    .filter(item -> categories.contains(item.getProductCategory()))
+                    .toList();
+        } else if (category != null) {
+            items = items.stream()
+                    .filter(item -> category.equals(item.getProductCategory()))
+                    .toList();
         }
-        if (isFavorite != null && isFavorite) {
-            return itemRepository.findByOwnerAndIsFavoriteTrue(owner);
-        }
-        if (minPrice != null) {
-            return itemRepository.findByOwnerAndPriceGreaterThanEqual(owner, minPrice);
-        }
-        if (maxPrice != null) {
-            return itemRepository.findByOwnerAndPriceLessThanEqual(owner, maxPrice);
-        }
-        if (title != null) {
-            return itemRepository.findByOwnerAndTitleContainingIgnoreCase(owner, title);
-        }
-        if (category != null && eventType != null) {
-            return itemRepository.findByOwnerAndProductCategoryAndEventType(owner, category, eventType);
-        }
-        if (category != null) {
-            return itemRepository.findByOwnerAndProductCategory(owner, category);
-        }
+
         if (eventType != null) {
-            return itemRepository.findByOwnerAndEventType(owner, eventType);
+            items = items.stream()
+                    .filter(item -> eventType.equals(item.getEventType()))
+                    .toList();
         }
-        return itemRepository.findByOwner(owner);
+
+        if (isFavorite != null && isFavorite) {
+            items = items.stream()
+                    .filter(item -> Boolean.TRUE.equals(item.getIsFavorite()))
+                    .toList();
+        }
+
+        if (minPrice != null && maxPrice != null) {
+            items = items.stream()
+                    .filter(item -> item.getPrice() >= minPrice && item.getPrice() <= maxPrice)
+                    .toList();
+        } else if (minPrice != null) {
+            items = items.stream()
+                    .filter(item -> item.getPrice() >= minPrice)
+                    .toList();
+        } else if (maxPrice != null) {
+            items = items.stream()
+                    .filter(item -> item.getPrice() <= maxPrice)
+                    .toList();
+        }
+
+        if (title != null) {
+            items = items.stream()
+                    .filter(item -> item.getTitle().toLowerCase().contains(title.toLowerCase()))
+                    .toList();
+        }
+
+        return items;
     }
 
     public Item save(Item item) {
@@ -103,5 +123,25 @@ public class ItemService {
 
             );
         }
-    }  
+    }
+    
+    public List<Item> sortItems(List<Item> items, String sortBy) {
+        if (sortBy == null) return items;
+
+        return switch (sortBy) {
+            case "price_asc" -> items.stream()
+                .sorted((a, b) -> Double.compare(a.getPrice(), b.getPrice()))
+                .toList();
+            case "price_desc" -> items.stream()
+                .sorted((a, b) -> Double.compare(b.getPrice(), a.getPrice()))
+                .toList();
+            case "title_asc" -> items.stream()
+                .sorted((a, b) -> a.getTitle().compareToIgnoreCase(b.getTitle()))
+                .toList();
+            case "title_desc" -> items.stream()
+                .sorted((a, b) -> b.getTitle().compareToIgnoreCase(a.getTitle()))
+                .toList();
+            default -> items;
+        };
+    }
 }
